@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Author: Skynoxk
 if [ -z "$1" ]; then
     echo "Usage: $0 \"shodan query\""
     exit 1
@@ -7,9 +7,7 @@ fi
 
 RAW_QUERY="$1"
 
-# ---------------------------
-# URL encode
-# ---------------------------
+
 urlencode() {
     python3 - "$1" << 'EOF'
 import sys, urllib.parse
@@ -23,9 +21,7 @@ echo "[+] Raw query     : $RAW_QUERY"
 echo "[+] Encoded query : $ENCODED_QUERY"
 echo
 
-# ---------------------------
-# Get ports
-# ---------------------------
+
 echo "[+] Fetching ports..."
 
 PORTS=$(curl -s \
@@ -38,16 +34,12 @@ echo "=== Open Ports ==="
 echo "$PORTS"
 echo
 
-# ---------------------------
-# Mode selection
-# ---------------------------
+
 echo "1) Query single port"
 echo "2) Query ALL ports"
 read -p "Choose option [1/2]: " MODE
 
-# ---------------------------
-# Single port mode
-# ---------------------------
+
 if [ "$MODE" = "1" ]; then
     read -p "Enter port: " PORT
     [ -z "$PORT" ] && echo "[-] No port selected" && exit 1
@@ -60,9 +52,7 @@ if [ "$MODE" = "1" ]; then
 
     RESULT=$(echo "$IPS" | sed "s/$/:$PORT/")
 
-# ---------------------------
-# ALL ports mode
-# ---------------------------
+
 elif [ "$MODE" = "2" ]; then
     RESULT=""
 
@@ -86,9 +76,7 @@ else
     exit 1
 fi
 
-# ---------------------------
-# Output
-# ---------------------------
+
 echo
 echo "=== IP:PORT RESULTS ==="
 echo "$RESULT"
