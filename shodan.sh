@@ -1,5 +1,15 @@
 #!/bin/bash
 # Author: Skynoxk
+echo "
+ ███████╗██╗  ██╗██╗   ██╗███╗   ██╗ ██████╗ ██╗  ██╗██╗  ██╗
+ ██╔════╝██║ ██╔╝╚██╗ ██╔╝████╗  ██║██╔═══██╗╚██╗██╔╝██║ ██╔╝
+ ███████╗█████╔╝  ╚████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ █████╔╝ 
+ ╚════██║██╔═██╗   ╚██╔╝  ██║╚██╗██║██║   ██║ ██╔██╗ ██╔═██╗ 
+ ███████║██║  ██╗   ██║   ██║ ╚████║╚██████╔╝██╔╝ ██╗██║  ██╗
+ ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+                    Shodan Search Tool
+" 
+
 if [ -z "$1" ]; then
     echo "Usage: $0 \"shodan query\""
     exit 1
@@ -21,19 +31,15 @@ echo "[+] Raw query     : $RAW_QUERY"
 echo "[+] Encoded query : $ENCODED_QUERY"
 echo
 
-
 echo "[+] Fetching ports..."
 
-PORTS=$(curl -s \
-"https://www.shodan.io/search/facet?query=${ENCODED_QUERY}&facet=port" \
-| perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
+PORTS=$(curl -s \n"https://www.shodan.io/search/facet?query=${ENCODED_QUERY}&facet=port" \n| perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
 
 [ -z "$PORTS" ] && echo "[-] No ports found" && exit 1
 
 echo "=== Open Ports ==="
 echo "$PORTS"
 echo
-
 
 echo "1) Query single port"
 echo "2) Query ALL ports"
@@ -44,9 +50,7 @@ if [ "$MODE" = "1" ]; then
     read -p "Enter port: " PORT
     [ -z "$PORT" ] && echo "[-] No port selected" && exit 1
 
-    IPS=$(curl -s \
-    "https://www.shodan.io/search/facet?query=${ENCODED_QUERY}+port%3A${PORT}&facet=ip" \
-    | perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
+    IPS=$(curl -s \n    "https://www.shodan.io/search/facet?query=${ENCODED_QUERY}+port%3A${PORT}&facet=ip" \n    | perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
 
     [ -z "$IPS" ] && echo "[-] No IPs found" && exit 1
 
@@ -59,9 +63,7 @@ elif [ "$MODE" = "2" ]; then
     for PORT in $PORTS; do
         echo "[+] Fetching IPs for port $PORT..."
 
-        IPS=$(curl -s \
-        "https://www.shodan.io/search/facet?query=${ENCODED_QUERY}+port%3A${PORT}&facet=ip" \
-        | perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
+        IPS=$(curl -s \n        "https://www.shodan.io/search/facet?query=${ENCODED_QUERY}+port%3A${PORT}&facet=ip" \n        | perl -nle 'print $1 if /<strong>(.*?)<\/strong>/')
 
         [ -z "$IPS" ] && continue
 
@@ -87,4 +89,3 @@ if [ -n "$FILE" ]; then
     echo "$RESULT" > "$FILE"
     echo "[+] Saved to $FILE"
 fi
-
